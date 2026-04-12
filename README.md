@@ -1,73 +1,101 @@
-# React + TypeScript + Vite
+# Codebase Universe
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Codebase Universe transforms a GitHub repository into an interactive 3D galaxy.
 
-Currently, two official plugins are available:
+- Files and folders are rendered as 3D nodes.
+- Parent-child relationships are rendered as edges.
+- Clicking a file node loads file metadata and content from GitHub.
+- Branches can be switched from the control bar.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Tech Stack
 
-## React Compiler
+- React + TypeScript + Vite
+- Three.js via React Three Fiber
+- Drei helpers for controls, stars, and lines
+- Framer Motion for UI transitions
+- GitHub REST API (repository metadata, branches, tree, file content)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Setup
 
-## Expanding the ESLint configuration
+1. Install dependencies:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+2. Create your environment file from the example:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+cp .env.example .env
 ```
+
+3. Add your GitHub token to `.env`:
+
+```env
+VITE_GITHUB_TOKEN=your_token_here
+```
+
+The token is optional, but strongly recommended to avoid low unauthenticated API limits.
+
+4. Start the app:
+
+```bash
+npm run dev
+```
+
+## Connect To An Actual GitHub Repository
+
+From the app UI:
+
+1. Paste a repository URL in the Repository URL field.
+2. Click Load Galaxy.
+3. Switch branches from the Branch dropdown.
+
+Example test repository:
+
+https://github.com/ZaraCook/test-jira.git
+
+The app already defaults to that URL on startup.
+
+## Where To Put The GitHub API Token
+
+Put it in the root `.env` file as:
+
+```env
+VITE_GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxx
+```
+
+Notes:
+
+- Never commit real tokens.
+- `.gitignore` already excludes `.env` and `.env.*`.
+- `.env.example` is committed as a safe template.
+
+## Testing
+
+Build and type-check:
+
+```bash
+npm run build
+```
+
+Lint:
+
+```bash
+npm run lint
+```
+
+## Architecture
+
+- Data layer: `src/data/github.ts`
+- Transformation layer: `src/data/graph.ts`
+- 3D rendering layer:
+  - `src/components/scene/GalaxyScene.tsx`
+  - `src/components/scene/RepoNode.tsx`
+  - `src/components/scene/RepoConnections.tsx`
+  - `src/components/scene/StarsBackground.tsx`
+- UI layer:
+  - `src/components/ui/ControlBar.tsx`
+  - `src/components/ui/RepoStatus.tsx`
+  - `src/components/ui/FilePanel.tsx`
+- Controller: `src/App.tsx`
