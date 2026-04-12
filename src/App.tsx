@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import './App.css'
 import { ControlBar } from './components/ui/ControlBar.tsx'
@@ -9,9 +9,15 @@ import { buildRepoGraph } from './data/graph.ts'
 import {
   fetchFileContent,
   fetchRepositorySnapshot,
+  fetchViewerRepositories,
   parseGitHubRepoUrl,
 } from './data/github.ts'
-import type { RepoGraph, RepoNodeData, RepositorySnapshot } from './data/types.ts'
+import type {
+  GitHubRepoOption,
+  RepoGraph,
+  RepoNodeData,
+  RepositorySnapshot,
+} from './data/types.ts'
 
 const DEFAULT_REPO_URL = 'https://github.com/ZaraCook/test-jira.git'
 
@@ -23,6 +29,9 @@ export default function App() {
   const [selectedBranch, setSelectedBranch] = useState<string>('')
   const [selectedNode, setSelectedNode] = useState<RepoNodeData | null>(null)
   const [selectedNodeContent, setSelectedNodeContent] = useState<string>('')
+  const [repoOptions, setRepoOptions] = useState<GitHubRepoOption[]>([])
+  const [selectedRepoUrl, setSelectedRepoUrl] = useState('')
+  const [isLoadingRepos, setIsLoadingRepos] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [isLoadingFile, setIsLoadingFile] = useState(false)
   const [error, setError] = useState<string>('')
@@ -112,6 +121,39 @@ export default function App() {
     }
   }
 
+  const loadViewerRepositories = async () => {
+    if (!githubToken) {
+      setError('Missing VITE_GITHUB_TOKEN in .env. Add one to connect your GitHub account.')
+      return
+    }
+
+    setError('')
+    setIsLoadingRepos(true)
+
+    try {
+      const repos = await fetchViewerRepositories(githubToken)
+      setRepoOptions(repos)
+
+      if (repos.length > 0) {
+        setSelectedRepoUrl(repos[0].url)
+      }
+    } catch (reposError) {
+      setError(
+        reposError instanceof Error ? reposError.message : 'Failed to load your repositories.',
+      )
+    } finally {
+      setIsLoadingRepos(false)
+    }
+  }
+
+  useEffect(() => {
+    if (githubToken) {
+      void loadViewerRepositories()
+    }
+    // We intentionally run this only once on startup.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   return (
     <div className="app-shell">
       <div className="app-main">
@@ -123,6 +165,15 @@ export default function App() {
         <ControlBar
           repoUrl={repoUrl}
           onRepoUrlChange={setRepoUrl}
+          repoOptions={repoOptions}
+          selectedRepoUrl={selectedRepoUrl}
+          onSelectRepo={(url) => {
+            setSelectedRepoUrl(url)
+            setRepoUrl(url)
+          }}
+          onLoadMyRepos={() => void loadViewerRepositories()}
+          isLoadingRepos={isLoadingRepos}
+          hasToken={Boolean(githubToken)}
           branches={branches}
           selectedBranch={selectedBranch}
           onBranchChange={(branch) => {
@@ -137,6 +188,7 @@ export default function App() {
           repository={snapshot?.repository ?? null}
           activeBranch={snapshot?.activeBranch ?? ''}
           rateLimited={!githubToken}
+          connectedRepoCount={repoOptions.length}
           stats={stats}
           loading={isLoading}
           error={error}

@@ -47,9 +47,13 @@ npm run dev
 
 From the app UI:
 
-1. Paste a repository URL in the Repository URL field.
-2. Click Load Galaxy.
-3. Switch branches from the Branch dropdown.
+1. Add `VITE_GITHUB_TOKEN` in `.env`.
+2. Click Connect GitHub to fetch repositories from your account.
+3. Pick any repo from the Your Repositories dropdown.
+4. Click Load Galaxy.
+5. Switch branches from the Branch dropdown.
+
+You can still paste any public GitHub URL manually in the Repository URL field.
 
 Example test repository:
 

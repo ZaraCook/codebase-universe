@@ -47,3 +47,11 @@ export interface RepositorySnapshot {
   activeBranch: string
   tree: RepoTreeEntry[]
 }
+
+export interface GitHubRepoOption {
+  id: number
+  fullName: string
+  url: string
+  private: boolean
+  description: string | null
+}

@@ -1,4 +1,9 @@
-import type { RepoMeta, RepositorySnapshot, RepoTreeEntry } from './types.ts'
+import type {
+  GitHubRepoOption,
+  RepoMeta,
+  RepositorySnapshot,
+  RepoTreeEntry,
+} from './types.ts'
 
 const GITHUB_API_BASE = 'https://api.github.com'
 
@@ -33,6 +38,14 @@ interface GitHubBranchResponse {
 interface GitHubFileResponse {
   content?: string
   encoding?: string
+}
+
+interface GitHubUserRepoResponse {
+  id: number
+  full_name: string
+  html_url: string
+  private: boolean
+  description: string | null
 }
 
 interface RequestOptions {
@@ -171,4 +184,23 @@ export async function fetchFileContent(options: FileContentOptions): Promise<str
   }
 
   return atob(file.content.replace(/\n/g, ''))
+}
+
+export async function fetchViewerRepositories(token: string): Promise<GitHubRepoOption[]> {
+  if (!token) {
+    throw new Error('A GitHub token is required to load your repositories.')
+  }
+
+  const repos = await githubRequest<GitHubUserRepoResponse[]>(
+    '/user/repos?per_page=100&sort=updated&type=owner',
+    { token },
+  )
+
+  return repos.map((repo) => ({
+    id: repo.id,
+    fullName: repo.full_name,
+    url: repo.html_url,
+    private: repo.private,
+    description: repo.description,
+  }))
 }

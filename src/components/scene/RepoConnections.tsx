@@ -23,10 +23,10 @@ export function RepoConnections({ nodes, edges }: RepoConnectionsProps) {
           <Line
             key={edge.id}
             points={[source.position, target.position]}
-            color="#334155"
-            lineWidth={0.8}
+            color="#64748b"
+            lineWidth={0.7}
             transparent
-            opacity={0.65}
+            opacity={0.5}
           />
         )
       })}

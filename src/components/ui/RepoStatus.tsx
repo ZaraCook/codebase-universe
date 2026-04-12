@@ -5,6 +5,7 @@ interface RepoStatusProps {
   repository: RepoMeta | null
   activeBranch: string
   rateLimited: boolean
+  connectedRepoCount: number
   loading: boolean
   error: string
   stats: {
@@ -18,6 +19,7 @@ export function RepoStatus({
   repository,
   activeBranch,
   rateLimited,
+  connectedRepoCount,
   loading,
   error,
   stats,
@@ -43,7 +45,7 @@ export function RepoStatus({
             ? 'Fetching metadata and tree from GitHub API...'
             : rateLimited
               ? 'Using unauthenticated requests. Add a token to increase GitHub API limits.'
-              : 'Authenticated requests are enabled via environment token.'}
+              : `Authenticated requests are enabled. ${connectedRepoCount} repos loaded from your account.`}
         </p>
       </div>
 

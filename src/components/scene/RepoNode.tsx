@@ -22,26 +22,47 @@ export function RepoNode({ node, selected, onSelect }: RepoNodeProps) {
     ref.current.scale.setScalar(pulse * breathing)
   })
 
-  const radius = node.kind === 'folder' ? 0.24 : 0.16
-  const color = selected ? '#f97316' : node.kind === 'folder' ? '#0ea5e9' : '#e2e8f0'
+  const radius = node.kind === 'folder' ? 0.28 : 0.17
+  const extensionPalette: Record<string, string> = {
+    ts: '#60a5fa',
+    tsx: '#93c5fd',
+    js: '#facc15',
+    jsx: '#fde68a',
+    json: '#f59e0b',
+    md: '#34d399',
+    css: '#38bdf8',
+    html: '#fb7185',
+    py: '#a78bfa',
+  }
+  const fileColor = extensionPalette[node.extension.toLowerCase()] ?? '#e2e8f0'
+  const color = selected ? '#fb7185' : node.kind === 'folder' ? '#22d3ee' : fileColor
+  const emissive = selected ? '#fb7185' : node.kind === 'folder' ? '#06b6d4' : '#334155'
 
   return (
-    <mesh
-      ref={ref}
+    <group
       position={node.position}
       onClick={(event) => {
         event.stopPropagation()
         onSelect(node)
       }}
     >
-      <sphereGeometry args={[radius, 24, 24]} />
-      <meshStandardMaterial
-        color={color}
-        emissive={selected ? '#ea580c' : node.kind === 'folder' ? '#0284c7' : '#334155'}
-        emissiveIntensity={selected ? 0.75 : 0.28}
-        metalness={0.2}
-        roughness={0.35}
-      />
-    </mesh>
+      <mesh ref={ref}>
+        <sphereGeometry args={[radius, 24, 24]} />
+        <meshStandardMaterial
+          color={color}
+          emissive={emissive}
+          emissiveIntensity={selected ? 0.95 : 0.4}
+          metalness={0.25}
+          roughness={0.2}
+        />
+      </mesh>
+
+      {selected ? (
+        <mesh>
+          <sphereGeometry args={[radius * 1.9, 24, 24]} />
+          <meshBasicMaterial color="#fb7185" transparent opacity={0.15} />
+        </mesh>
+      ) : null}
+    </group>
   )
 }
