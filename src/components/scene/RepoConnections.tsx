@@ -4,9 +4,10 @@ import type { RepoEdgeData, RepoNodeData } from '../../data/types.ts'
 interface RepoConnectionsProps {
   nodes: RepoNodeData[]
   edges: RepoEdgeData[]
+  selectedNodeId: string | null
 }
 
-export function RepoConnections({ nodes, edges }: RepoConnectionsProps) {
+export function RepoConnections({ nodes, edges, selectedNodeId }: RepoConnectionsProps) {
   const index = new Map(nodes.map((node) => [node.id, node]))
 
   return (
@@ -23,10 +24,22 @@ export function RepoConnections({ nodes, edges }: RepoConnectionsProps) {
           <Line
             key={edge.id}
             points={[source.position, target.position]}
-            color="#64748b"
-            lineWidth={0.7}
+            color={
+              selectedNodeId && (edge.source === selectedNodeId || edge.target === selectedNodeId)
+                ? '#fda4af'
+                : '#64748b'
+            }
+            lineWidth={
+              selectedNodeId && (edge.source === selectedNodeId || edge.target === selectedNodeId)
+                ? 1.2
+                : 0.65
+            }
             transparent
-            opacity={0.5}
+            opacity={
+              selectedNodeId && (edge.source === selectedNodeId || edge.target === selectedNodeId)
+                ? 0.88
+                : 0.42
+            }
           />
         )
       })}

@@ -1,16 +1,19 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { Mesh } from 'three'
 import { useFrame } from '@react-three/fiber'
+import { Html } from '@react-three/drei'
 import type { RepoNodeData } from '../../data/types.ts'
 
 interface RepoNodeProps {
   node: RepoNodeData
   selected: boolean
+  showLabel: boolean
   onSelect: (node: RepoNodeData) => void
 }
 
-export function RepoNode({ node, selected, onSelect }: RepoNodeProps) {
+export function RepoNode({ node, selected, showLabel, onSelect }: RepoNodeProps) {
   const ref = useRef<Mesh>(null)
+  const [isHovered, setIsHovered] = useState(false)
 
   useFrame(({ clock }) => {
     if (!ref.current) {
@@ -41,6 +44,8 @@ export function RepoNode({ node, selected, onSelect }: RepoNodeProps) {
   return (
     <group
       position={node.position}
+      onPointerOver={() => setIsHovered(true)}
+      onPointerOut={() => setIsHovered(false)}
       onClick={(event) => {
         event.stopPropagation()
         onSelect(node)
@@ -62,6 +67,12 @@ export function RepoNode({ node, selected, onSelect }: RepoNodeProps) {
           <sphereGeometry args={[radius * 1.9, 24, 24]} />
           <meshBasicMaterial color="#fb7185" transparent opacity={0.15} />
         </mesh>
+      ) : null}
+
+      {showLabel && (isHovered || selected) ? (
+        <Html distanceFactor={9} position={[0, radius * 1.8, 0]}>
+          <div className="node-label">{node.name}</div>
+        </Html>
       ) : null}
     </group>
   )

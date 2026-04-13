@@ -76,6 +76,9 @@
 .app-header {
   border-radius: 16px;
   padding: 18px 20px;
+  position: relative;
+  overflow: hidden;
+  background: rgba(10, 15, 30, 0.88);
 }
 
 .app-header h1 {
@@ -160,6 +163,61 @@
   gap: 10px;
 }
 
+.experience-panel {
+  display: grid;
+  grid-template-columns: 2fr 0.9fr 1fr 0.9fr 1fr 1fr auto auto auto auto;
+  gap: 10px;
+  border-radius: 14px;
+  padding: 12px;
+  background: linear-gradient(140deg, var(--panel), var(--panel-strong));
+  border: 1px solid var(--panel-border);
+  backdrop-filter: blur(10px);
+}
+
+.experience-panel label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+  font-weight: 600;
+}
+
+.experience-panel input,
+.experience-panel select {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 10px;
+  color: var(--text);
+  font-size: 0.9rem;
+  padding: 9px 10px;
+  outline: none;
+}
+
+.experience-panel input:focus,
+.experience-panel select:focus {
+  border-color: var(--violet);
+  box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.2);
+}
+
+.experience-panel .toggle {
+  flex-direction: row;
+  align-items: center;
+  align-self: end;
+  gap: 8px;
+  font-size: 0.76rem;
+  padding-bottom: 11px;
+  white-space: nowrap;
+}
+
+.experience-panel .toggle input {
+  width: 16px;
+  height: 16px;
+  padding: 0;
+}
+
 .repo-status > div {
   border-radius: 14px;
   padding: 12px 14px;
@@ -198,6 +256,51 @@
   grid-template-columns: 2fr 1fr;
   gap: 12px;
   min-height: 65vh;
+}
+
+.scene-nav {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: rgba(15, 23, 42, 0.55);
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  color: var(--text-dim);
+  font-size: 0.85rem;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+
+.scene-nav-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.scene-nav-actions button {
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: rgba(15, 23, 42, 0.6);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 7px 10px;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.scene-nav-actions button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: rgba(125, 211, 252, 0.55);
+  box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.16);
+}
+
+.scene-nav-actions button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .scene-card {
@@ -267,6 +370,54 @@
   color: #cbd5e1;
 }
 
+.panel-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.panel-actions button,
+.panel-actions a {
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: rgba(15, 23, 42, 0.6);
+  color: var(--text);
+  border-radius: 9px;
+  padding: 7px 10px;
+  font-size: 0.8rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.panel-actions button:hover:not(:disabled),
+.panel-actions a:hover {
+  transform: translateY(-1px);
+  border-color: rgba(167, 139, 250, 0.6);
+  box-shadow: 0 0 0 2px rgba(167, 139, 250, 0.18);
+}
+
+.panel-actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.node-label {
+  background: rgba(2, 6, 23, 0.85);
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  color: #e2e8f0;
+  border-radius: 8px;
+  padding: 4px 8px;
+  font-size: 0.72rem;
+  max-width: 220px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .hint {
   margin-top: 12px;
   color: #cbd5e1;
@@ -309,6 +460,10 @@
     grid-template-columns: 1fr 1fr;
   }
 
+  .experience-panel {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .control-bar button {
     width: 100%;
   }
@@ -319,6 +474,11 @@
   .repo-status,
   .control-bar {
     grid-template-columns: 1fr;
+  }
+
+  .scene-nav {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .file-panel,
